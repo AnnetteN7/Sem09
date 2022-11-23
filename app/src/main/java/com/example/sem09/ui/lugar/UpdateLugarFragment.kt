@@ -89,18 +89,18 @@ override fun onCreateView(
     }
         private fun deleteLugar(){
             val builder = AlertDialog.Builder(requireContext())
-         /*   builder.setPositiveButton(getString(R.string.si)) {_,_ ->*/
+           builder.setPositiveButton(getString(R.string.bt_update_lugar)) {_,_ ->
                 lugarViewModel.deleteLugar(args.lugar)
                 Toast.makeText(requireContext(),
                 getString(R.string.menu_delete)+ "${args.lugar.nombre}!",
                 Toast.LENGTH_SHORT).show()
                 findNavController().navigate(R.id.action_updateLugarFragment_to_nav_home)
             }
-            /*builder.setNegativeButton(getString(R.string.no)) {_,_ ->}
+            builder.setNegativeButton(getString(R.string.menu_delete)) {_,_ ->}
             builder.setTitle(R.string.menu_delete)
             builder.setMessage(getString(R.string.msg_delete)+"${args.lugar.nombre}?")
             builder.create().show()
-        }*/
+        }
 
 
     }
