@@ -27,30 +27,6 @@ class LugarDao {
     }
 
     //CRUD CREATE read update delete
-    fun  getLugares() : MutableLiveData<List<Lugar>> {
-        val listaLugares = MutableLiveData<List<Lugar>>()
-        firestore.collection("lugaresApp")
-            .document(codigoUsuario)
-            .collection("misLugares")
-            .addSnapshotListener { snapshot, e ->
-                if (e != null) {
-                    return@addSnapshotListener
-                }
-                if (snapshot != null) {
-                    val lista = ArrayList<Lugar>()
-                    val lugares = snapshot.documents
-                    lugares.forEach {
-                        val lugar = it.toObject(Lugar::class.java)
-                        if (lugar != null) {
-                            lista.add(lugar)
-                        }
-                    }
-                    listaLugares.value = lista
-                }
-            }
-        return listaLugares
-    }
-
 
 
     fun saveLugar(lugar: Lugar) {
@@ -62,7 +38,8 @@ class LugarDao {
                 .collection("misLugares")
                 .document()
             lugar.id = document.id
-        } else {
+        }
+        else {
             //modificar
             document = firestore
                 .collection("lugaresMiercoles")
@@ -85,7 +62,8 @@ class LugarDao {
     fun deleteLugar(lugar: Lugar) {
         if (lugar.id.isNotEmpty()) {
 
-            firestore.collection("lugaresMiercoles").document(codigoUsuario)
+            firestore.collection("lugaresMiercoles").
+            document(codigoUsuario)
                 .collection("misLugares")
                 .document(lugar.id).
                 delete()
@@ -99,4 +77,28 @@ class LugarDao {
     }
 
 
+    fun  getLugares() : MutableLiveData<List<Lugar>> {
+        val listaLugares = MutableLiveData<List<Lugar>>()
+        firestore.
+        collection("lugaresMiercoles")
+            .document(codigoUsuario)
+            .collection("misLugares")
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    return@addSnapshotListener
+                }
+                if (snapshot != null) {
+                    val lista = ArrayList<Lugar>()
+                    val lugares = snapshot.documents
+                    lugares.forEach {
+                        val lugar = it.toObject(Lugar::class.java)
+                        if (lugar != null) {
+                            lista.add(lugar)
+                        }
+                    }
+                    listaLugares.value = lista
+                }
+            }
+        return listaLugares
+    }
 }

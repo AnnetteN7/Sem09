@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.sem09.databinding.FragmentAddLugarBinding
 import com.example.sem09.databinding.FragmentLugarFilaBinding
 import com.example.sem09.model.Lugar
@@ -20,6 +21,11 @@ class LugarAdapter: RecyclerView.Adapter<LugarAdapter.LugarViewHolder>() {
             itemBinding.tvTelefono.text = lugar.telefono
             itemBinding.tvCorreo.text = lugar.correo
 
+            if(lugar.rutaImagen?.isNotEmpty() ==true){
+                Glide.with(itemBinding.root.context)
+                    .load(lugar.rutaImagen)
+                    .into(itemBinding.imagen)
+            }
 
             //Eventp edit
             itemBinding.vistaFila.setOnClickListener{

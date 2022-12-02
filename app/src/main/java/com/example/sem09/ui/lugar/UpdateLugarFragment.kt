@@ -1,6 +1,7 @@
 package com.example.sem09.ui.lugar
 
 import android.app.AlertDialog
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
@@ -9,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
 import com.example.sem09.R
 import com.example.sem09.databinding.FragmentUpdateLugarBinding
 import com.example.sem09.model.Lugar
@@ -22,6 +24,8 @@ class UpdateLugarFragment : Fragment() {
     private var _binding: FragmentUpdateLugarBinding? = null
     private val binding get() = _binding!!
     private lateinit var lugarViewModel: LugarViewModel
+
+    private lateinit var mediaPlayer: MediaPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,10 +48,34 @@ override fun onCreateView(
     binding.etWeb.setText(args.lugar.web)
 
 
-
-       //Inflete the layout for this fragment
-       return binding.root
+    binding.btAgregarLugar.setOnClickListener {
+        updateLugar()
     }
+
+  /*  binding.btnDelete.setOnClickListener { deleteLugar() }*/
+
+
+    if (args.lugar.rutaAudio?.isNotEmpty()==true){
+        mediaPlayer = MediaPlayer()
+        mediaPlayer.setDataSource(args.lugar.rutaAudio)
+        mediaPlayer.prepare()
+        binding.btPlay.isEnabled = true
+    }
+    else{
+        binding.btPlay.isEnabled = false
+    }
+
+    binding.btPlay.setOnClickListener { mediaPlayer.start() }
+
+    if(args.lugar.rutaImagen?.isNotEmpty() ==true){
+        Glide.with(requireContext())
+            .load(args.lugar.rutaImagen)
+            .into(binding.imagen)
+    }
+
+    // Inflate the layout for this fragment
+    return binding.root
+}
 
 
     private fun updateLugar() {
@@ -63,7 +91,7 @@ override fun onCreateView(
         }
         //crear objeto
         else {
-            val lugar = Lugar(args.lugar.id, nombre, correo, telefono, web)
+            val lugar = Lugar(args.lugar.id, nombre, correo, telefono, web,args.lugar.rutaAudio,args.lugar.rutaImagen)
             lugarViewModel.saveLugar(lugar)
             Toast.makeText(requireContext(), getString(R.string.bt_update_lugar), Toast.LENGTH_LONG)
                 .show()
@@ -71,13 +99,10 @@ override fun onCreateView(
         }
 
 
-        binding.btAgregarLugar.setOnClickListener {
-            updateLugar()
-        }
 
 
     }
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+   /* override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
        inflater.inflate(R.menu.delete_menu,menu)
     }
 
@@ -86,24 +111,21 @@ override fun onCreateView(
             deleteLugar()
         }
         return super.onContextItemSelected(item)
-    }
-        private fun deleteLugar(){
-            val builder = AlertDialog.Builder(requireContext())
-           builder.setPositiveButton(getString(R.string.bt_update_lugar)) {_,_ ->
-                lugarViewModel.deleteLugar(args.lugar)
-                Toast.makeText(requireContext(),
-                getString(R.string.menu_delete)+ "${args.lugar.nombre}!",
-                Toast.LENGTH_SHORT).show()
-                findNavController().navigate(R.id.action_updateLugarFragment_to_nav_home)
-            }
-            builder.setNegativeButton(getString(R.string.menu_delete)) {_,_ ->}
-            builder.setTitle(R.string.menu_delete)
-            builder.setMessage(getString(R.string.msg_delete)+"${args.lugar.nombre}?")
-            builder.create().show()
+    }*/
+    private fun deleteLugar() {
+        val alerta = AlertDialog.Builder(requireContext())
+        alerta.setTitle(R.string.bt_delete_lugar)
+        alerta.setMessage(getString(R.string.msg_pregunta_eliminar)+"${args.lugar.nombre}?")
+        alerta.setPositiveButton(getString(R.string.msg_si)) {_,_ ->
+            lugarViewModel.deleteLugar(args.lugar)
+            Toast.makeText(requireContext(),getString(R.string.msg_lugar_deleted),Toast.LENGTH_LONG).show()
+            findNavController().navigate(R.id.action_updateLugarFragment_to_nav_home)
         }
-
-
+        alerta.setNegativeButton(getString(R.string.msg_no)) {_,_ ->}
+        alerta.create().show()
     }
+
+}
 
 
 
