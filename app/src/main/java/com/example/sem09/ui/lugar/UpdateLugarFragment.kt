@@ -42,7 +42,7 @@ override fun onCreateView(
     _binding = FragmentUpdateLugarBinding.inflate(inflater,container,false)
 
     //cargar los valores Edit
-    binding.etNombre.setText(args.lugar.nombre)
+    binding.etNombre.setText( args.lugar.nombre)
     binding.etTelefono.setText(args.lugar.telefono)
     binding.etEmail.setText(args.lugar.correo)
     binding.etWeb.setText(args.lugar.web)
